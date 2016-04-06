@@ -1,0 +1,22 @@
+<ion-view>
+  <ion-content class="home">
+    <div>
+      <p class="home-title center-align">Welcome</p>
+        
+    </div>
+    <div ng-hide="user === undefined">
+      <div ng-hide="user">
+        <p class="home-subtitle center-align"> Authentication is required </p>
+        <div>
+          <button ui-sref="login" class="button button-full button-balanced bold">Login</button>
+          <button ui-sref="signup" class="button button-full button-positive bold">Signup</button>
+        </div>
+      </div>
+      <div ng-show="user" ng-controller="AccountController as account">
+        <p class="home-subtitle center-align"> Quick start menu </p>
+        <button ui-sref="trashcans" class="button button-full button-dark bold">Trash Cans</button>
+        <button ng-click="account.logout()" class="button button-full button-stable bold">Logout</button>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

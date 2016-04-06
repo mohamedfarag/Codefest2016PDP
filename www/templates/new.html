@@ -1,0 +1,24 @@
+<ion-view>
+  <ion-nav-bar align-title="center" class="bar-light">
+    <ion-nav-back-button></ion-nav-back-button>
+    <ion-nav-title>
+      New Trash Can
+    </ion-nav-title>
+  </ion-nav-bar>
+  <ion-content>
+    <h1 class="account-title center-align">Add A New Trash Can</h1>
+    <div class="list">
+      <label class="item item-input">
+        <input type="text" placeholder="ID" ng-model="new.trashcan.trashcanId">
+      </label>
+      <label class="item item-input">
+        <input type="number" placeholder="Latitude" ng-model="new.trashcan.latitude">
+      </label>
+      <label class="item item-input">
+        <input type="number" placeholder="Longitude" ng-model="new.trashcan.longitude">
+      </label>
+      <button class="button button-full button-positive" ng-click="new.add()">Submit</button>
+    </div>
+
+  </ion-content>
+</ion-view>
