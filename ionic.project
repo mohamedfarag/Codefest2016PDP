@@ -1,6 +1,6 @@
 {
   "name": "stamplay-ionic-starter",
-  "app_id": "",
+  "app_id": "e02c8686",
   "gulpStartupTasks": [
     "sass",
     "watch"
