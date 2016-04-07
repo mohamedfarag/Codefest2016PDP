@@ -37,7 +37,7 @@ angular.module('starter.controllers', [])
       Stamplay.User.signup(vm.user)
       .then(function(user) {
         $rootScope.user = user;
-        $state.go("tasks");
+        $state.go("trashcans");
       }, function() {
         errorHandler({
           title : "<h4 class='center-align'>A Valid Email and Password is Required</h4>"
