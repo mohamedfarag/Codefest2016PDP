@@ -13,16 +13,16 @@
       <ion-item ng-repeat="item in trashcan.trashcans" ng-class="{ 'active' : item.id === trashcan.active }">
         <div class="row">
           <div class="col col-80" on-tap="trashcan.setActive(item._id)">
-            <h2>{{ item.trashcanId }}</h2>
-            <p>Lat: {{ item.latitude }}</p>
-            <p>Long: {{ item.longitude }}</p>
+            <p>{{ item.trashcanName }}</p>
+            <p>Point X: {{ item.pointX }}</p>
+            <p>Point Y: {{ item.pointY }}</p>
             <p>Trash Bags: {{ item.trashbags }}</p>
+          </div>
         </div>
-      </div>
       <ion-option-button class="button-energized ion-edit"
       ui-sref="edit({ id : item._id })"></ion-option-button>
       <ion-option-button class="button-assertive ion-trash-a"
-      ng-click="trashcan.deleteTrashcan(item._id)" ng-show="user.givenRole==='5704843eea731cc530dd3a46'"></ion-option-button>
+      ng-click="trashcan.deleteTrashcan(item._id)" ng-show="user.givenRole===roles.admin"></ion-option-button>
       </ion-item>
     </ion-list>
 
@@ -31,7 +31,7 @@
         <h2 class="dark">
           No trash cans found
         </h2>
-        <h2 class="dark" ng-show="user.givenRole==='5704843eea731cc530dd3a46'">Try adding a trash can by clicking the <i class="ion-plus-circled dark"></i>
+        <h2 class="dark" ng-show="user.givenRole===roles.admin">Try adding a trash can by clicking the <i class="ion-plus-circled dark"></i>
         icon in the top right corner.</h2>
       </div>
     </div>

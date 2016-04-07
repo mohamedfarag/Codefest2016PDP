@@ -16,7 +16,17 @@ angular.module('starter.services', [])
       }
     );
     return def.promise;
-  }
+  },
+  
+    getRoles : function(){
+      return Stamplay.User.getRoles().then(function(res){
+        var result = {};
+        res.data.forEach(function(role){
+          result[role.name] = role._id;
+        });
+        return result;
+      });
+    }
 };
 }])
 

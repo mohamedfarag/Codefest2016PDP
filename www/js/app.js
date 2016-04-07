@@ -14,6 +14,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       $rootScope.user = user;
     });
 
+  AccountService.getRoles().then(function(roles){
+    console.log(roles);
+    $rootScope.roles = roles;
+  });
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)

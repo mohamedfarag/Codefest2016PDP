@@ -9,14 +9,25 @@
     <h1 class="account-title center-align">Update Trash Can</h1>
     <div class="list">
       <label class="item item-input">
-        <input type="text" placeholder="ID" ng-model="edit.trashcan.trashcanId">
+        <input type="text" placeholder="Name" ng-model="new.trashcan.trashcanName">
       </label>
       <label class="item item-input">
-        <input type="number" placeholder="Latitude" ng-model="edit.trashcan.latitude">
+        <input type="text" placeholder="Folder Path" ng-model="new.trashcan.trashcanFolderPath">
       </label>
       <label class="item item-input">
-        <input type="number" placeholder="Longitude" ng-model="edit.trashcan.longitude">
+        <input type="text" placeholder="Symbol ID" ng-model="new.trashcan.trashcanSymbolId">
       </label>
+      <label class="item item-input">
+        <input type="text" placeholder="Type" ng-model="new.trashcan.trashcanType">
+      </label>
+      <ion-checkbox ng-model="new.trashcan.trashcanCigButts">Cigarette Butts</ion-checkbox>
+      <label class="item item-input">
+        <input type="number" placeholder="Point X" ng-model="new.trashcan.pointX">
+      </label>
+      <label class="item item-input">
+        <input type="number" placeholder="Latitude" ng-model="new.trashcan.pointY">
+      </label>
+
       <button class="button button-full button-positive" ng-click="edit.save()">Submit</button>
     </div>
   </ion-content>
