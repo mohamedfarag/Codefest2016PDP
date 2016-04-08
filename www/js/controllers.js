@@ -170,10 +170,7 @@ angular.module('starter.controllers', [])
     modalScope.incrementBagCount =  function(){
         console.log('incrementing count for ', modalScope.trashcan.id);
         modalScope.trashcan.bagCount++;
-      };
-    modalScope.decrementBagCount =  function(){
-        console.log('decrementing count for ', modalScope.trashcan.id);
-        modalScope.trashcan.bagCount--;
+        modalPopup.hide();
       };
     modalScope.closeModal = function(){
       modalPopup.hide();
