@@ -25,7 +25,8 @@ The starter kit comes with a fully featured task list, based on user accounts. I
 Setup Instructions
 
 1. Clone and cd into repo: `git clone https://github.com/Stamplay/stamplay-ionic-starter.git`
-2. Run `npm install -g ionic`
+2. Run `npm install -g cordova`
+3. Run `npm install -g ionic`
 4. Run `ionic platform add ios android`
 5. Run `npm install && gulp install`
 6. Run `stamplay init`, add Stamplay app credentials
