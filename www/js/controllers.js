@@ -161,11 +161,27 @@ angular.module('starter.controllers', [])
   };
 
 }])
-.controller('SchedulePickupController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope",
-  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope) {
+.controller('SchedulePickupController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope","$cordovaGeolocation",
+  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope,$cordovaGeolocation) {
     var vm = this;
 
-    vm.center = [40.4408023685817,-79.99779558181763];
+
+        var watchOptions = {timeout : 3000, enableHighAccuracy: false};
+        var watch = $cordovaGeolocation.watchPosition(watchOptions);
+
+        watch.then(
+           null,
+
+           function(err) {
+              console.log(err)
+           },
+
+           function(position) {
+             vm.center = [position.coords.latitude,position.coords.longitude];
+           }
+        );
+
+    vm.center = null;
 
     vm.fetch = function(spinner) {
       if(spinner){
@@ -215,17 +231,36 @@ angular.module('starter.controllers', [])
      };
 
      $scope.$on('$destroy', function() {
+       watch.clearWatch();
        modalPopup.remove();
      });
 
      vm.fetch(true);
 
   }])
-.controller('PickupTrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope",
-  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope) {
+.controller('PickupTrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope","$cordovaGeolocation",
+  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope, $cordovaGeolocation) {
     var vm = this;
 
-    vm.center = [40.4408023685817,-79.99779558181763];
+
+    var watchOptions = {timeout : 3000, enableHighAccuracy: false};
+    var watch = $cordovaGeolocation.watchPosition(watchOptions);
+
+    watch.then(
+       null,
+
+       function(err) {
+          console.log(err)
+       },
+
+       function(position) {
+         vm.center = [position.coords.latitude,position.coords.longitude];
+       }
+    );
+
+
+
+    vm.center = null;
 
     vm.fetch = function(spinner) {
       if(spinner){
@@ -247,7 +282,6 @@ angular.module('starter.controllers', [])
     };
 
     var modalScope = $scope.$new();
-    modalScope.trashcan = {id: '1234', bagCount: 5};
     modalScope.markBagsPickedUp =  function(){
         console.log('picked up backs for ', modalScope.trashcan.id);
         $ionicLoading.show();
@@ -276,6 +310,8 @@ angular.module('starter.controllers', [])
      };
 
      $scope.$on('$destroy', function() {
+
+          watch.clearWatch();
        modalPopup.remove();
      });
 
