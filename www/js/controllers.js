@@ -165,12 +165,55 @@ angular.module('starter.controllers', [])
   function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope) {
     var vm = this;
 
+    vm.center = [40.4408023685817,-79.99779558181763];
+
+
+    vm.fetch = function(spinner) {
+      if(spinner){
+        $ionicLoading.show();
+      }
+      TrashService.getAllTrashCans()
+      .then(
+        function(response) {
+          vm.trashcans = response.data.map(function(t){
+
+            var rt= t.requestDate && new Date(t.requestDate);
+            var waitTime = rt && ((new Date().getTime() - rt.getTime()) /(60*60*1000));
+
+            var color = 'grey';
+            if(t.trashbags > 0) {
+              color= (waitTime > 4 ? 'red' : (waitTime > 2 ? 'orange': 'blue'));
+            }
+
+            return {
+              id: t.id,
+              position: [t.pointY, t.pointX],
+              icon: {
+                path:'CIRCLE', scale: 4, strokeColor: color
+              },
+              bagCount: t.trashbags,
+              _original: t
+            };
+          });
+        }).finally(function(){
+          if(spinner){
+            $ionicLoading.hide();
+          }
+        });
+
+    };
+
+
     var modalScope = $scope.$new();
-    modalScope.trashcan = {id: '1234', bagCount: 0};
     modalScope.incrementBagCount =  function(){
         console.log('incrementing count for ', modalScope.trashcan.id);
-        modalScope.trashcan.bagCount++;
-        modalPopup.hide();
+        $ionicLoading.show();
+        TrashService.addBag(modalScope.trashcan._original).then(function(){
+          return vm.fetch(false);
+        }).finally(function(){
+          $ionicLoading.hide();
+          modalPopup.hide();
+        });
       };
     modalScope.closeModal = function(){
       modalPopup.hide();
@@ -183,13 +226,16 @@ angular.module('starter.controllers', [])
      }).then(function(modal) {
        modalPopup = modal;
      });
-     vm.simulateSchedule = function() {
+     vm.scheduleTrashcan = function(e, trashcan) {
+       modalScope.trashcan = trashcan;
        modalPopup.show();
      };
 
      $scope.$on('$destroy', function() {
        modalPopup.remove();
      });
+
+     vm.fetch(true);
 
   }])
 .controller('PickupTrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope",
