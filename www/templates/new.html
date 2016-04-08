@@ -12,20 +12,14 @@
         <input type="text" placeholder="Name" ng-model="new.trashcan.trashcanName">
       </label>
       <label class="item item-input">
-        <input type="text" placeholder="Folder Path" ng-model="new.trashcan.trashcanFolderPath">
-      </label>
-      <label class="item item-input">
-        <input type="text" placeholder="Symbol ID" ng-model="new.trashcan.trashcanSymbolId">
-      </label>
-      <label class="item item-input">
         <input type="text" placeholder="Type" ng-model="new.trashcan.trashcanType">
       </label>
         <ion-checkbox ng-model="new.trashcan.trashcanCigButts">Cigarette Butts</ion-checkbox>
       <label class="item item-input">
-        <input type="number" placeholder="Point X" ng-model="new.trashcan.pointX">
+        <input type="number" placeholder="Latitude" ng-model="new.trashcan.latitude">
       </label>
       <label class="item item-input">
-        <input type="number" placeholder="Point Y" ng-model="new.trashcan.pointY">
+        <input type="number" placeholder="Longitude" ng-model="new.trashcan.longitude">
       </label>
 
       <button class="button button-full button-positive" ng-click="new.add()">Submit</button>
@@ -33,9 +27,3 @@
 
   </ion-content>
 </ion-view>
-.then(function(){
-      return Stamplay.Object("history").save({
-          trashcan : context.data.trashcanId,
-          trashbags : context.data.count
-        });
-    })

@@ -169,8 +169,8 @@ angular.module('starter.services', [])
 
           trashcans.forEach(function(trashcan){
             results.push({
-              pointX : trashcan.pointX,
-              pointY : trashcan.pointY,
+              latitude : trashcan.latitude,
+              longitude : trashcan.longitude,
               name : trashcan.trashcanName,
               count : trashMap[trashcan._id] || 0
             });
