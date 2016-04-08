@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "font-awesome": "fontawesome#^4.5.0",
-    "ngmap": "ngmap#^1.17.3"
+    "ngmap": "ngmap#^1.17.3",
+    "ngCordova": "ngCordova#0.1.26-alpha"
   }
 }
