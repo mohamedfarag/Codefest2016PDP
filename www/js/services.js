@@ -64,7 +64,19 @@ angular.module('starter.services', [])
       }, function(err) {
         deffered.reject(err);
       });
-      return deffered.promise;
+      return deffered.promise.then(function(response){
+        var trashcans = response.data;
+        trashcans.forEach(function(t){
+          //specify position
+          t.position = [t.pointY, t.pointX];
+
+          //calculate wait time
+          var rt= t.requestDate && new Date(t.requestDate);
+          t.waitTimeInHours = rt && ((new Date().getTime() - rt.getTime()) /(60*60*1000));
+        });
+
+        return trashcans;
+      });
     },
 
     deleteTrashcan : function(id) {
@@ -124,7 +136,7 @@ angular.module('starter.services', [])
       return -1;
     else if (a.count > b.count)
       return 1;
-    else 
+    else
       return 0;
   }
 
@@ -144,8 +156,7 @@ angular.module('starter.services', [])
           history = res.data;
           return TrashService.getAllTrashCans();
         })
-        .then(function(res){
-          trashcans = res.data;
+        .then(function(trashcans){
           var trashMap = {};
           results = [];
           history.forEach(function(entry){
@@ -166,7 +177,7 @@ angular.module('starter.services', [])
           });
 
           results.sort(compareCount).reverse();
-          
+
 
         });
     },

@@ -82,8 +82,8 @@ angular.module('starter.controllers', [])
 
     TrashService.getAllTrashCans()
     .then(
-      function(response) {
-        vm.trashcans = response.data;
+      function(trashcans) {
+        vm.trashcans = trashcans;
         $ionicLoading.hide();
       }, function() {
         $ionicLoading.hide();
@@ -174,25 +174,18 @@ angular.module('starter.controllers', [])
       }
       TrashService.getAllTrashCans()
       .then(
-        function(response) {
-          vm.trashcans = response.data.map(function(t){
+        function(trashcans) {
+          vm.trashcans = trashcans;
 
-            var rt= t.requestDate && new Date(t.requestDate);
-            var waitTime = rt && ((new Date().getTime() - rt.getTime()) /(60*60*1000));
-
+          //set symbology
+          vm.trashcans.forEach(function(t){
             var color = 'grey';
             if(t.trashbags > 0) {
-              color= (waitTime > 4 ? 'red' : (waitTime > 2 ? 'orange': 'blue'));
+              color= (t.waitTimeInHours > 4 ? 'red' : (t.waitTimeInHours > 2 ? 'orange': 'blue'));
             }
 
-            return {
-              id: t.id,
-              position: [t.pointY, t.pointX],
-              icon: {
+            t.icon = {
                 path:'CIRCLE', scale: 4, strokeColor: color
-              },
-              bagCount: t.trashbags,
-              _original: t
             };
           });
         }).finally(function(){
@@ -208,7 +201,7 @@ angular.module('starter.controllers', [])
     modalScope.incrementBagCount =  function(){
         console.log('incrementing count for ', modalScope.trashcan.id);
         $ionicLoading.show();
-        TrashService.addBag(modalScope.trashcan._original).then(function(){
+        TrashService.addBag(modalScope.trashcan).then(function(){
           return vm.fetch(false);
         }).finally(function(){
           $ionicLoading.hide();
