@@ -15,6 +15,7 @@
       <div ng-show="user" ng-controller="AccountController as account">
         <p class="home-subtitle center-align"> Quick start menu </p>
         <button ui-sref="trashcans" class="button button-full button-dark bold">Trash Cans</button>
+        <button ui-sref="criteria" class="button button-full button-dark bold" ng-show="user.givenRole===roles.admin">Statistics</button>
         <button ng-click="account.logout()" class="button button-full button-stable bold">Logout</button>
       </div>
     </div>

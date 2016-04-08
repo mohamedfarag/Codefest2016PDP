@@ -18,7 +18,7 @@ angular.module('starter.controllers', [])
       Stamplay.User.login(vm.user)
       .then(function(user) {
         $rootScope.user = user;
-        $state.go("trashcans");
+        $state.go("home");
       }, function() {
         $ionicLoading.hide();
         errorHandler({
@@ -37,7 +37,7 @@ angular.module('starter.controllers', [])
       Stamplay.User.signup(vm.user)
       .then(function(user) {
         $rootScope.user = user;
-        $state.go("trashcans");
+        $state.go("home");
       }, function() {
         errorHandler({
           title : "<h4 class='center-align'>A Valid Email and Password is Required</h4>"
@@ -167,3 +167,20 @@ angular.module('starter.controllers', [])
 
 
 }])
+
+.controller('StatsController', ["HistoryService", "$ionicLoading", "$rootScope", "$state", "$stateParams", function(HistoryService,  $ionicLoading, $rootScope, $state, $stateParams) {
+  var vm = this;
+  vm.criteria = {};
+  vm.results = HistoryService.getResults();
+  //vm.criteria.searchType = 'average';
+  vm.search = function(){
+    $ionicLoading.show();
+    HistoryService.getHistory(vm.criteria).then(function(){
+      $ionicLoading.hide();
+      $state.go("stats");
+    }, function(){
+      $ionicLoading.hide();
+    });
+  };
+
+}]);
