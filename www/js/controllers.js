@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AccountController', ["AccountService", "$state", "$rootScope", "$ionicLoading", "$ionicPopup", 
+.controller('AccountController', ["AccountService", "$state", "$rootScope", "$ionicLoading", "$ionicPopup",
   function(AccountService, $state, $rootScope, $ionicLoading, $ionicPopup) {
 
     var errorHandler = function(options) {
@@ -18,7 +18,7 @@ angular.module('starter.controllers', [])
       Stamplay.User.login(vm.user)
       .then(function(user) {
         $rootScope.user = user;
-        $state.go("trashcans");
+        $state.go("home");
       }, function() {
         $ionicLoading.hide();
         errorHandler({
@@ -160,10 +160,71 @@ angular.module('starter.controllers', [])
     });
   };
 
-
-
-
-
-
-
 }])
+.controller('SchedulePickupController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope",
+  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope) {
+    var vm = this;
+
+    var modalScope = $scope.$new();
+    modalScope.trashcan = {id: '1234', bagCount: 0};
+    modalScope.incrementBagCount =  function(){
+        console.log('incrementing count for ', modalScope.trashcan.id);
+        modalScope.trashcan.bagCount++;
+      };
+    modalScope.decrementBagCount =  function(){
+        console.log('decrementing count for ', modalScope.trashcan.id);
+        modalScope.trashcan.bagCount--;
+      };
+    modalScope.closeModal = function(){
+      modalPopup.hide();
+    };
+
+    var modalPopup;
+    $ionicModal.fromTemplateUrl('templates/schedule-pickup-modal.html', {
+       scope: modalScope,
+       animation: 'slide-in-up'
+     }).then(function(modal) {
+       modalPopup = modal;
+     });
+     vm.simulateSchedule = function() {
+       modalPopup.show();
+     };
+
+     $scope.$on('$destroy', function() {
+       modalPopup.remove();
+     });
+
+  }])
+.controller('PickupTrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope",
+  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope) {
+    var vm = this;
+
+    var modalScope = $scope.$new();
+    modalScope.trashcan = {id: '1234', bagCount: 5};
+    modalScope.markBagsPickedUp =  function(){
+        console.log('picked up backs for ', modalScope.trashcan.id);
+        modalScope.trashcan.bagCount = 0;
+        modalPopup.hide();
+      };
+    modalScope.closeModal = function(){
+      modalPopup.hide();
+    };
+
+    var modalPopup;
+    $ionicModal.fromTemplateUrl('templates/pickup-trash-modal.html', {
+       scope: modalScope,
+       animation: 'slide-in-up'
+     }).then(function(modal) {
+       modalPopup = modal;
+     });
+     vm.simulateClear = function() {
+       modalPopup.show();
+     };
+
+     $scope.$on('$destroy', function() {
+       modalPopup.remove();
+     });
+
+  }])
+
+;

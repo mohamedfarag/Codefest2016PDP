@@ -97,7 +97,7 @@ angular.module('starter.services', [])
         return deffered.promise;
     },
 
-    
+
     updateTrashcan : function(task) {
       var deffered = $q.defer();
       Stamplay.Object("trashcan").update(task._id, task)

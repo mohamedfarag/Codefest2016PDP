@@ -65,6 +65,21 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       controller: "AccountController",
       controllerAs : "account"
     })
+    .state('schedule-pickup', {
+      cache : false,
+      url: '/schedule-pickup',
+      templateUrl: 'templates/schedule-pickup.html',
+      controller: "SchedulePickupController",
+      controllerAs : "ctrl"
+    })
+    .state('pickup-trash', {
+      cache : false,
+      url: '/pickup-trash',
+      templateUrl: 'templates/pickup-trash.html',
+      controller: "PickupTrashController",
+      controllerAs : "ctrl"
+    })
+
     .state('trashcans', {
       cache : false,
       url: '/trashcans',

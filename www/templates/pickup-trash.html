@@ -1,0 +1,21 @@
+<ion-view>
+  <ion-nav-bar align-title="center" class="bar-light">
+    <ion-nav-back-button></ion-nav-back-button>
+    <ion-nav-title>
+      Pickup Trash
+    </ion-nav-title>
+  </ion-nav-bar>
+  <ion-content>
+
+    <div>TODO: map goes here</div>
+    <button class="button button-positive" ng-click="ctrl.simulateClear()">
+      Simulate Clicking on Trashcan
+    </button>
+
+
+    <button class="button icon-left button-positive ion-map" ng-click="trashcan.addBag(item)">
+      Calculate Pickup Route
+    </button>
+
+  </ion-content>
+</ion-view>
