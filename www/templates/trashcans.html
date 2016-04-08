@@ -11,14 +11,21 @@
   <ion-content ng-init="trashcan.fetch()">
     <ion-list can-swipe="true">
       <ion-item ng-repeat="item in trashcan.trashcans" ng-class="{ 'active' : item.id === trashcan.active }">
-        <div class="row">
-          <div class="col col-80" on-tap="trashcan.setActive(item._id)">
+        
+          <div>
             <p>{{ item.trashcanName }}</p>
             <p>Point X: {{ item.pointX }}</p>
             <p>Point Y: {{ item.pointY }}</p>
             <p>Trash Bags: {{ item.trashbags }}</p>
+            <p ng-show="item.requestDate">Pickup requested: {{item.requestDate | date:'MMM dd yyyy h:mm:ss a'}}</p>
+            <button class="button icon-left button-positive ion-plus-round" ng-click="trashcan.addBag(item)">
+              Add Bag
+            </button>
+            <button ng-show="item.requestDate" class="button icon-left button-balanced ion-checkmark-round" ng-click="trashcan.clearBags(item)">
+              Clear Bags
+            </button>
           </div>
-        </div>
+        
       <ion-option-button class="button-energized ion-edit"
       ui-sref="edit({ id : item._id })"></ion-option-button>
       <ion-option-button class="button-assertive ion-trash-a"

@@ -17,7 +17,7 @@ angular.module('starter.services', [])
     );
     return def.promise;
   },
-  
+
     getRoles : function(){
       return Stamplay.User.getRoles().then(function(res){
         var result = {};
@@ -34,6 +34,22 @@ angular.module('starter.services', [])
 .factory('TrashService', ["$rootScope", "$q", function($rootScope, $q) {
 
   return {
+
+    addBag : function(trashcan){
+      var codeBlock = new Stamplay.Codeblock('updateTrashbags');
+      return codeBlock.run({
+        trashcanId : trashcan._id,
+        count : ++trashcan.trashbags
+      });
+    },
+
+    clearBags : function(trashcan){
+      var codeBlock = new Stamplay.Codeblock('updateTrashbags');
+      return codeBlock.run({
+        trashcanId : trashcan._id,
+        count : 0
+      });
+    },
 
     getAllTrashCans : function() {
       var deffered = $q.defer();

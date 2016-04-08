@@ -102,6 +102,24 @@ angular.module('starter.controllers', [])
       });
     };
 
+  vm.addBag = function(trashcan) {
+    $ionicLoading.show();
+    TrashService.addBag(trashcan).then(function(){
+      vm.fetch();
+    }, function(){
+      $ionicLoading.hide();
+    });
+  };
+
+  vm.clearBags = function(trashcan) {
+    $ionicLoading.show();
+    TrashService.clearBags(trashcan).then(function(){
+      vm.fetch();
+    }, function(){
+      $ionicLoading.hide();
+    });
+  };
+
 }])
 
 .controller('TrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams) {
@@ -113,14 +131,15 @@ angular.module('starter.controllers', [])
     .then(function(data) {
       $ionicLoading.hide();
       vm.trashcan = data[0];
-    }, function(err) {
+    }, function() {
       $ionicLoading.hide();
     });
   }
 
-  // Add a task.
+  // Add a can.
   vm.add = function() {
     $ionicLoading.show();
+    vm.trashcan.trashbags = 0;
     TrashService.addNew(vm.trashcan)
     .then(function() {
       $ionicLoading.hide();
@@ -140,6 +159,8 @@ angular.module('starter.controllers', [])
       $ionicLoading.hide();
     });
   };
+
+
 
 
 

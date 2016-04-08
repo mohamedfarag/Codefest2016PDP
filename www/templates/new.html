@@ -25,7 +25,7 @@
         <input type="number" placeholder="Point X" ng-model="new.trashcan.pointX">
       </label>
       <label class="item item-input">
-        <input type="number" placeholder="Latitude" ng-model="new.trashcan.pointY">
+        <input type="number" placeholder="Point Y" ng-model="new.trashcan.pointY">
       </label>
 
       <button class="button button-full button-positive" ng-click="new.add()">Submit</button>
@@ -33,3 +33,9 @@
 
   </ion-content>
 </ion-view>
+.then(function(){
+      return Stamplay.Object("history").save({
+          trashcan : context.data.trashcanId,
+          trashbags : context.data.count
+        });
+    })
