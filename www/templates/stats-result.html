@@ -1,0 +1,20 @@
+<ion-view>
+  <ion-nav-bar align-title="center" class="bar-light">
+    <ion-nav-back-button></ion-nav-back-button>
+    <ion-nav-title>
+      Statistics
+    </ion-nav-title>
+  </ion-nav-bar>
+  <ion-content>
+    <h1 class="account-title center-align">Total Bags per Can</h1>
+    <div class="list">
+      <div class="item item-icon-left" ng-repeat="item in stats.results">
+        <i class="icon ion-trash-a"></i>
+        <p>{{item.name}}</p>
+        <p>Point X: {{item.pointX}}</p>
+        <p>Point Y: {{item.pointY}}</p>
+        <span class="badge badge-assertive" style="top:40px">{{item.count}}</span>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

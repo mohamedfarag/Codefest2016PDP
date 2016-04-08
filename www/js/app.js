@@ -98,6 +98,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       templateUrl: 'templates/edit.html',
       controller: "TrashController",
       controllerAs : "edit"
+    }).state('criteria', {
+      url: '/history/criteria',
+      templateUrl: 'templates/stats-criteria.html',
+      controller: "StatsController",
+      controllerAs : "stats"
+    }).state('stats', {
+      url: '/history/result',
+      templateUrl: 'templates/stats-result.html',
+      controller: "StatsController",
+      controllerAs : "stats"
     });
 
 

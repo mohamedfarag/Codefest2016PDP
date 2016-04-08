@@ -55,7 +55,10 @@ angular.module('starter.services', [])
       var deffered = $q.defer();
 
       Stamplay.Object("trashcan")
-      .get()
+      .get({
+        page : 0,
+        per_page : 0
+      })
       .then(function(response) {
         deffered.resolve(response);
       }, function(err) {
@@ -91,7 +94,7 @@ angular.module('starter.services', [])
         Stamplay.Object("trashcan").get({ _id : id })
         .then(function(response) {
           deffered.resolve(response.data);
-        }, function(error) {
+        }, function(err) {
           deffered.reject(err);
         });
         return deffered.promise;
@@ -110,4 +113,68 @@ angular.module('starter.services', [])
     }
 
   };
+}])
+
+.factory('HistoryService', ["$rootScope", "$q", "TrashService", function($rootScope, $q, TrashService) {
+
+  var results;
+
+  function compareCount(a,b) {
+    if (a.count < b.count)
+      return -1;
+    else if (a.count > b.count)
+      return 1;
+    else 
+      return 0;
+  }
+
+  return {
+
+    getHistory : function(criteria){
+      criteria.from = criteria.from || new Date(0);
+      criteria.to = criteria.to || new Date();
+      var history;
+      var trashcans;
+      return Stamplay.Query("object", "history")
+        .lessThanOrEqual("dt_create", criteria.to)
+        .greaterThanOrEqual("dt_create", criteria.from)
+        .pagination(0,0)
+        .exec()
+        .then(function(res){
+          history = res.data;
+          return TrashService.getAllTrashCans();
+        })
+        .then(function(res){
+          trashcans = res.data;
+          var trashMap = {};
+          results = [];
+          history.forEach(function(entry){
+            var trashcanId = entry.trashcan[0];
+            if(!trashMap[trashcanId]){
+              trashMap[trashcanId] = 0;
+            }
+            trashMap[trashcanId] = trashMap[trashcanId] + entry.trashbags;
+          });
+
+          trashcans.forEach(function(trashcan){
+            results.push({
+              pointX : trashcan.pointX,
+              pointY : trashcan.pointY,
+              name : trashcan.trashcanName,
+              count : trashMap[trashcan._id] || 0
+            });
+          });
+
+          results.sort(compareCount).reverse();
+          
+
+        });
+    },
+
+    getResults : function(){
+      return results;
+    }
+
+  };
+
 }]);

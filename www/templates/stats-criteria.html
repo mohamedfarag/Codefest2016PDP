@@ -1,0 +1,35 @@
+<ion-view>
+  <ion-nav-bar align-title="center" class="bar-light">
+    <ion-nav-back-button></ion-nav-back-button>
+    <ion-nav-title>
+      Statistics
+    </ion-nav-title>
+  </ion-nav-bar>
+  <ion-content>
+    <h1 class="account-title center-align">Search Criteria</h1>
+    <div class="list">
+      <div class="item item-divider">
+        From
+      </div>
+      <label class="item item-input">
+        <input type="date" placeholder="From" ng-model="stats.criteria.from">
+      </label>
+      <div class="item item-divider">
+        To
+      </div>
+      <label class="item item-input">
+        <input type="date" placeholder="To" ng-model="stats.criteria.to">
+      </label>
+      <!--
+      <div class="item item-divider">
+        Report Types
+      </div>
+      <ion-list>
+        <ion-radio ng-model="stats.criteria.searchType" ng-value="'average'">Average Bags per Can</ion-radio>
+        <ion-radio ng-model="stats.criteria.searchType" ng-value="'busy'">Busiest Cans</ion-radio>
+      </ion-list>
+      -->
+      <button class="button button-full button-positive" ng-click="stats.search()">Submit</button>
+    </div>
+  </ion-content>
+</ion-view>
