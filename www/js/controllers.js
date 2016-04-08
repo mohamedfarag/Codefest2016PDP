@@ -167,7 +167,6 @@ angular.module('starter.controllers', [])
 
     vm.center = [40.4408023685817,-79.99779558181763];
 
-
     vm.fetch = function(spinner) {
       if(spinner){
         $ionicLoading.show();
@@ -178,16 +177,7 @@ angular.module('starter.controllers', [])
           vm.trashcans = trashcans;
 
           //set symbology
-          vm.trashcans.forEach(function(t){
-            var color = 'grey';
-            if(t.trashbags > 0) {
-              color= (t.waitTimeInHours > 4 ? 'red' : (t.waitTimeInHours > 2 ? 'orange': 'blue'));
-            }
-
-            t.icon = {
-                path:'CIRCLE', scale: 4, strokeColor: color
-            };
-          });
+          vm.trashcans.forEach(addStandardTrashCanSymbology);
         }).finally(function(){
           if(spinner){
             $ionicLoading.hide();
@@ -235,12 +225,39 @@ angular.module('starter.controllers', [])
   function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope) {
     var vm = this;
 
+    vm.center = [40.4408023685817,-79.99779558181763];
+
+    vm.fetch = function(spinner) {
+      if(spinner){
+        $ionicLoading.show();
+      }
+      TrashService.getAllTrashCans()
+      .then(
+        function(trashcans) {
+          vm.trashcans = trashcans;
+
+          //set symbology
+          vm.trashcans.forEach(addStandardTrashCanSymbology);
+        }).finally(function(){
+          if(spinner){
+            $ionicLoading.hide();
+          }
+        });
+
+    };
+
     var modalScope = $scope.$new();
     modalScope.trashcan = {id: '1234', bagCount: 5};
     modalScope.markBagsPickedUp =  function(){
         console.log('picked up backs for ', modalScope.trashcan.id);
-        modalScope.trashcan.bagCount = 0;
-        modalPopup.hide();
+        $ionicLoading.show();
+
+        TrashService.clearBags(modalScope.trashcan).then(function(){
+          return vm.fetch(false);
+        }).finally(function(){
+          $ionicLoading.hide();
+          modalPopup.hide();
+        });
       };
     modalScope.closeModal = function(){
       modalPopup.hide();
@@ -253,13 +270,16 @@ angular.module('starter.controllers', [])
      }).then(function(modal) {
        modalPopup = modal;
      });
-     vm.simulateClear = function() {
+     vm.clearTrashcan = function(e, trashcan) {
+       modalScope.trashcan = trashcan;
        modalPopup.show();
      };
 
      $scope.$on('$destroy', function() {
        modalPopup.remove();
      });
+
+     vm.fetch(true);
 
   }])
 
@@ -280,3 +300,14 @@ angular.module('starter.controllers', [])
 
 }])
 ;
+
+function addStandardTrashCanSymbology(trashcan) {
+    var color = 'grey';
+    if(trashcan.trashbags > 0) {
+      color= (trashcan.waitTimeInHours > 4 ? 'red' : (trashcan.waitTimeInHours > 2 ? 'orange': 'blue'));
+    }
+
+    trashcan.icon = {
+        path:'CIRCLE', scale: 4, strokeColor: color
+    };
+}
