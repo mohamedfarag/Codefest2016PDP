@@ -255,7 +255,6 @@ angular.module('starter.controllers', [])
     };
     vm.showAllFilter = function(){
       return function(trashcan){
-        console.log('t', trashcan);
         return vm.showAll || trashcan.trashbags > 0;
       };
     };
@@ -304,16 +303,45 @@ angular.module('starter.controllers', [])
        deregregisterGeolocationUpdates();
      });
 
-     vm.fetch(true).then(function(trashcans){
-       zoomService.getExtentFor(trashcans,'schedule-pickup-map').then(function(extent){
-          vm.center = [extent.center.latitude, extent.center.longitude];
-          vm.zoom = extent.zoom;
-       }).catch(function(e){
-         console.error('failed to load extent', e);
+     function refresh(){
+       return vm.fetch(true).then(function(trashcans){
+         zoomService.getExtentFor(trashcans,'schedule-pickup-map').then(function(extent){
+            vm.center = [extent.center.latitude, extent.center.longitude];
+            vm.zoom = extent.zoom;
+         }).catch(function(e){
+           console.error('failed to load extent', e);
+         });
        });
-     });
+     }
+
+     refresh();
+
+     vm.determineRoute = function(){
+       return refresh().then(function(){
+
+         var needsPickedUp = vm.trashcans.filter(function(f){
+           return f.trashbags > 0;
+         });
+
+         var directionsRequest = {
+           start: vm.truck.position
+         };
+
+         var orderedNeedsPickedUp = orderTrashcanByDistance(vm.truck.position, needsPickedUp);
+
+         var windowLength = Math.min(9, orderedNeedsPickedUp.length);
+         if(windowLength >= 2) {
+           directionsRequest.waypoints = orderedNeedsPickedUp.slice(0,windowLength-2).map(trashcanToWaypoint);
+         }
+         directionsRequest.end = [orderedNeedsPickedUp[windowLength-1].latitude, orderedNeedsPickedUp[windowLength-1].longitude];
+
+         vm.directionsRequest = directionsRequest;
+
+       });
+     };
 
   }])
+
 
 .controller('StatsQueryController', ["$state",
   function($state) {
@@ -449,4 +477,53 @@ function addTrachcanFetch(vm, $ionicLoading, TrashService, augmenter) {
         }
       });
   };
+}
+
+
+function toRadians(d){
+  return d * Math.PI / 180;
+}
+
+function latLonDistance(lat0, lon0, lat1, lon1) {
+  var R = 6371000; // metres
+  var φ1 = toRadians(lat0);
+  var φ2 = toRadians(lat1);
+  var Δφ = toRadians(lat1-lat0);
+  var Δλ = toRadians(lon1-lon0);
+
+  var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+          Math.cos(φ1) * Math.cos(φ2) *
+          Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  var d = R * c;
+  return d;
+}
+
+function orderTrashcanByDistance(position, trashcans) {
+  var wrapped = trashcans.map(function(t){
+    return {
+      trashcan: t,
+      distance: latLonDistance(position[0], position[1], t.latitude, t.longitude)
+    };
+  });
+
+  wrapped.sort(function(a,b){
+    return a.distance - b.distance;
+  });
+
+  return wrapped.map(function(w){
+    return w.trashcan;
+  });
+}
+
+function trashcanToWaypoint(trashcan) {
+  return {
+    location:
+      {
+        lat: trashcan.latitude,
+        lng: trashcan.longitude
+      },
+      stopover: true
+    };
 }
