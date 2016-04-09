@@ -4,12 +4,7 @@
   height: 100% !important;
 }
 
-/*
 .scroll, .mapWrap {
-  height: 100%;
-}*/
-
-.scroll, .mapWrap-full {
   height: 100%;
 }
 
