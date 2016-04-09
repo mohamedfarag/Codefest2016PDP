@@ -2,15 +2,17 @@
   <ion-nav-bar align-title="center" class="bar-light">
     <ion-nav-back-button></ion-nav-back-button>
     <ion-nav-title>
-      Pickup Trash
+     <span ng-hide="ctrl.directionsRequest">Pickup Trash</span>
     </ion-nav-title>
     <ion-nav-buttons side="right">
-      <button class="button button-icon icon" ng-class="{'ion-eye': ctrl.showAll,'ion-eye-disabled': !ctrl.showAll}" ng-click="ctrl.toggleShowAll()"></button>
-      <button class="button button-icon icon ion-android-car" ng-click="ctrl.determineRoute(true)"></button>
-      <button class="button button-icon icon ion-close-circled" ng-click="ctrl.cancelRoute()" ng-if="ctrl.directionsRequest"></button>
+      <button class="button button-icon icon" ng-class="{'ion-eye': ctrl.showAll,'ion-eye-disabled': !ctrl.showAll}" ng-click="ctrl.toggleShowAll()" ng-hide="ctrl.showDirs"></button>
+      <button class="button button-icon icon ion-android-car" ng-click="ctrl.determineRoute(true)" ng-hide="ctrl.showDirs"></button>
+      <button class="button button-icon icon ion-ios-list" ng-click="ctrl.showDirs = true;" ng-if="ctrl.directionsRequest" ng-hide="ctrl.showDirs"></button>
+      <button class="button button-icon icon ion-ios-navigate" ng-click="ctrl.showDirs = false;" ng-if="ctrl.directionsRequest" ng-show="ctrl.showDirs"></button>
+      <button class="button button-icon icon ion-close-circled" ng-click="ctrl.cancelRoute(); ctrl.showDirs = false;" ng-if="ctrl.directionsRequest"></button>
     </ion-nav-buttons>
   </ion-nav-bar>
-  <ion-content scroll="false">
+  <ion-content>
     <div class="mapWrap"  data-tap-disabled="true">
       <ng-map class="pdpmap" center="{{ctrl.center}}" zoom="{{ctrl.zoom}}">
         <directions
@@ -18,7 +20,8 @@
                panel="directions-panel"
                waypoints="{{ctrl.directionsRequest.waypoints}}"
                origin="{{ctrl.directionsRequest.start}}"
-               destination="{{ctrl.directionsRequest.end}}">
+               destination="{{ctrl.directionsRequest.end}}"
+               >
              </directions>
 
        <marker position="{{ctrl.truck.position}}" icon="{{ctrl.truck.icon}}" title="You are here"></marker>
@@ -26,6 +29,9 @@
          icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})" on-click="ctrl.clearTrashcan(t)"></marker>
       </ng-map>
     </div>
-    <div id="directions-panel"></div>
+    <div style="position: absolute; top:0px; z-index:10000; background-color: white;" ng-show="ctrl.showDirs">
+      <div id="directions-panel"></div>
+    </div>
+    
   </ion-content>
 </ion-view>
