@@ -85,7 +85,7 @@ angular.module('starter.controllers', [])
     .then(
       function(trashcans) {
         vm.trashcans = trashcans;
-        vm.trashcans.forEach(addStandardTrashCanSymbology);
+        vm.trashcans.forEach(addScheduleTrashCanSymbology);
 
         return zoomService.getExtentFor(trashcans,'schedule-pickup-map').then(function(extent){
            vm.center = [extent.center.latitude, extent.center.longitude];
@@ -207,7 +207,7 @@ angular.module('starter.controllers', [])
         vm.center = [p.latitude, p.longitude];
       }
     });
-    addTrachcanFetch(vm, $ionicLoading, TrashService, addStandardTrashCanSymbology);
+    addTrachcanFetch(vm, $ionicLoading, TrashService, addScheduleTrashCanSymbology);
 
     function incrementBagCount(trashcan){
         console.log('incrementing count for ', trashcan.id);
@@ -350,7 +350,7 @@ angular.module('starter.controllers', [])
 
      vm.cancelRoute = function(){
        vm.directionsRequest = null;
-     }
+     };
 
   }])
 
@@ -420,6 +420,22 @@ function addAveragePerDayTrashCanSymbology(trashcan) {
     trashcan.icon = {
         path:buildCirclePath(radius), strokeColor: color, fillColor: color, fillOpacity: 1
     };
+}
+
+
+function addScheduleTrashCanSymbology(trashcan) {
+
+    var color = determineSymbolColor(trashcan);
+    var strokeOpacity = 1;
+    var strokeWeight = 3;
+    var r = 4;
+    r = r + strokeWeight/2;
+
+    trashcan.icon = {
+        path:buildCirclePath(r),
+        strokeWeight:strokeWeight,strokeColor: color, strokeOpacity: strokeOpacity,
+        fillColor: color, fillOpacity: 1
+      };
 }
 
 function addStandardTrashCanSymbology(trashcan) {
