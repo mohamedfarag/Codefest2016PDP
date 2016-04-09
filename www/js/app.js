@@ -41,6 +41,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     $rootScope.roles = roles;
   });
 
+  $rootScope.mapHeight = window.innerHeight - 44;
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)

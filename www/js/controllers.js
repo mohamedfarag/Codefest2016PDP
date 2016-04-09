@@ -186,86 +186,91 @@ angular.module('starter.controllers', [])
   };
 
 }])
-.controller('SchedulePickupController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope","$cordovaGeolocation",
-  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope,$cordovaGeolocation) {
+.controller('SchedulePickupController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope","$cordovaGeolocation", "$ionicActionSheet",
+  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope,$cordovaGeolocation,$ionicActionSheet) {
     var vm = this;
 
     var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation);
     addTrachcanFetch(vm, $ionicLoading, TrashService, addStandardTrashCanSymbology);
 
-    var modalScope = $scope.$new();
-    modalScope.incrementBagCount =  function(){
-        console.log('incrementing count for ', modalScope.trashcan.id);
+    function incrementBagCount(trashcan){
+        console.log('incrementing count for ', trashcan.id);
         $ionicLoading.show();
-        TrashService.addBag(modalScope.trashcan).then(function(){
+        TrashService.addBag(trashcan).then(function(){
           return vm.fetch(false);
         }).finally(function(){
           $ionicLoading.hide();
-          modalPopup.hide();
         });
       };
-    modalScope.closeModal = function(){
-      modalPopup.hide();
-    };
 
-    var modalPopup;
-    $ionicModal.fromTemplateUrl('templates/schedule-pickup-modal.html', {
-       scope: modalScope,
-       animation: 'slide-in-up'
-     }).then(function(modal) {
-       modalPopup = modal;
-     });
+   
+
      vm.scheduleTrashcan = function(e, trashcan) {
-       modalScope.trashcan = trashcan;
-       modalPopup.show();
+
+      var sheet = $ionicActionSheet.show({
+        buttons: [
+          {text : 'Add Bag'}
+        ],
+        cancelText : 'Cancel',
+        titleText : 'Bags: ' + trashcan.trashbags,
+        cancel: function(){
+          return true;
+        },
+        buttonClicked : function(index){
+          incrementBagCount(trashcan);
+          return true;
+        }
+      });
+
      };
 
      $scope.$on('$destroy', function() {
        deregregisterGeolocationUpdates();
-       modalPopup.remove();
      });
 
      vm.fetch(true);
 
   }])
-.controller('PickupTrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope","$cordovaGeolocation",
-  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope, $cordovaGeolocation) {
+.controller('PickupTrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope","$cordovaGeolocation", "$ionicActionSheet",
+  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope, $cordovaGeolocation, $ionicActionSheet) {
     var vm = this;
 
     var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation);
     addTrachcanFetch(vm, $ionicLoading, TrashService, addStandardTrashCanSymbology);
 
-    var modalScope = $scope.$new();
-    modalScope.markBagsPickedUp =  function(){
-        console.log('picked up backs for ', modalScope.trashcan.id);
+      function markBagsPickedUp(trashcan){
+        console.log('picked up backs for ', trashcan.id);
         $ionicLoading.show();
 
-        TrashService.clearBags(modalScope.trashcan).then(function(){
+        TrashService.clearBags(trashcan).then(function(){
           return vm.fetch(false);
         }).finally(function(){
           $ionicLoading.hide();
-          modalPopup.hide();
         });
       };
-    modalScope.closeModal = function(){
-      modalPopup.hide();
-    };
 
-    var modalPopup;
-    $ionicModal.fromTemplateUrl('templates/pickup-trash-modal.html', {
-       scope: modalScope,
-       animation: 'slide-in-up'
-     }).then(function(modal) {
-       modalPopup = modal;
-     });
+
      vm.clearTrashcan = function(e, trashcan) {
-       modalScope.trashcan = trashcan;
-       modalPopup.show();
+
+      var sheet = $ionicActionSheet.show({
+        buttons: [
+          {text : 'Clear Bags'}
+        ],
+        cancelText : 'Cancel',
+        titleText : 'Bags: ' + trashcan.trashbags,
+        cancel: function(){
+          return true;
+        },
+        buttonClicked : function(index){
+          markBagsPickedUp(trashcan);
+          return true;
+        }
+      });
+
      };
 
      $scope.$on('$destroy', function() {
        deregregisterGeolocationUpdates();
-       modalPopup.remove();
      });
 
      vm.fetch(true);
