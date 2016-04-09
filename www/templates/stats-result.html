@@ -6,20 +6,21 @@
     </ion-nav-title>
   </ion-nav-bar>
   <ion-content>
-    <h1 class="account-title center-align">Statistics</h1>
     <ng-map center="{{ctrl.center}}" zoom="14" ng-if="ctrl.center">
      <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
        icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})"></marker>
     </ng-map>
+
     <div class="list">
       <div class="item item-icon-left" ng-repeat="item in ctrl.trashcans">
         <i class="icon ion-trash-a"></i>
-        <p>{{item.name}}</p>
-        <p>Latitude: {{item.latitude}}</p>
-        <p>Longitude: {{item.longitude}}</p>
-        <span class="badge badge-assertive">{{item.stats.total}}</span>
-        <span class="badge badge-assertive">{{item.stats.averagePerDay}}</span>
+        <p>Name: {{item.name}}</p>
+        <p>Latitude: {{item.latitude|number:6}}</p>
+        <p>Longitude: {{item.longitude|number:6}}</p>
+        <p>Total: {{item.stats.total|number:0}}</p>
+        <p>Average: {{item.stats.averagePerDay|number:2}}</p>
       </div>
     </div>
+
   </ion-content>
 </ion-view>

@@ -301,7 +301,7 @@ angular.module('starter.controllers', [])
       to: new Date($stateParams.endTimestamp)
     };
     HistoryService.getHistory(criteria).then(function(trashcans){
-      trashcans.forEach(addStandardTrashCanSymbology);
+      trashcans.forEach(addAveragePerDayTrashCanSymbology);
       vm.trashcans = trashcans;
     }, function(e){
       console.log('error loading stats',e);
@@ -314,6 +314,14 @@ angular.module('starter.controllers', [])
   fetch();
 }])
 ;
+
+function addAveragePerDayTrashCanSymbology(trashcan) {
+    var scale = Math.ceil(Math.max(0.5,trashcan.stats.averagePerDay)*2);
+
+    trashcan.icon = {
+        path:'CIRCLE', scale: scale, strokeColor: 'red', fillColor: 'red'
+    };
+}
 
 function addStandardTrashCanSymbology(trashcan) {
     var color = 'grey';
@@ -330,7 +338,6 @@ function registerGeolocationUpdates(vm, $cordovaGeolocation) {
   var timestamp = new Date().getTime();
   var watchOptions = {timeout : 3000, enableHighAccuracy: false};
   var watch = $cordovaGeolocation.watchPosition(watchOptions);
-  console.log('register', timestamp);
   vm.center = null;
 
   watch.then(
@@ -347,7 +354,6 @@ function registerGeolocationUpdates(vm, $cordovaGeolocation) {
   );
 
   return function deregisterGeolocationUpdates(){
-      console.log('deregister', timestamp);
     watch.clearWatch();
   };
 }

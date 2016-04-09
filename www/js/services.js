@@ -146,7 +146,8 @@ angular.module('starter.services', [])
       criteria.from = criteria.from || new Date(0);
       criteria.to = criteria.to || new Date();
       var partialDays = (criteria.to.getTime() - criteria.from.getTime())/(24*60*60*1000);
-      var days =  Math.ceil(partialDays);
+      var days =  Math.floor(partialDays)+1;
+      console.log('datys', partialDays, days);
       var history;
       var trashcans;
       return Stamplay.Query("object", "history")
@@ -171,7 +172,7 @@ angular.module('starter.services', [])
           trashcans.forEach(function(trashcan){
             trashcan.stats = {
               total: trashMap[trashcan._id] || 0,
-              averagePerDay: trashMap[trashcan._id] || 0
+              averagePerDay: (trashMap[trashcan._id] || 0)/days
             };
           });
 
