@@ -63,7 +63,7 @@ angular.module('starter.controllers', [])
     };
   }])
 
-.controller('HomeController', ["TrashService", "$ionicLoading", function(TrashService,  $ionicLoading) {
+.controller('HomeController', ["TrashService", "$ionicLoading", "$ionicActionSheet", "$state", function(TrashService,  $ionicLoading, $ionicActionSheet, $state) {
   var vm = this;
 
   var findIndex = function(id) {
@@ -72,8 +72,7 @@ angular.module('starter.controllers', [])
     }).indexOf(id);
   };
 
-  // Display loading indicator
-  $ionicLoading.show();
+
 
   vm.setActive = function(id) {
     vm.active = id;
@@ -81,11 +80,12 @@ angular.module('starter.controllers', [])
 
   // Fetch Cans
   vm.fetch = function() {
-
+    $ionicLoading.show();
     TrashService.getAllTrashCans()
     .then(
       function(trashcans) {
         vm.trashcans = trashcans;
+        vm.trashcans.forEach(addStandardTrashCanSymbology);
         $ionicLoading.hide();
       }, function() {
         $ionicLoading.hide();
@@ -121,6 +121,29 @@ angular.module('starter.controllers', [])
       $ionicLoading.hide();
     });
   };
+
+  vm.openActionSheet = function(e,trashcan){
+    var sheet = $ionicActionSheet.show({
+      buttons: [
+        {text : 'Update'}
+      ],
+      destructiveText : 'Delete',
+      cancelText : 'Cancel',
+      cancel: function(){
+        return true;
+      },
+      destructiveButtonClicked : function(){
+        vm.deleteTrashcan(trashcan._id);
+        return true;
+      },
+      buttonClicked : function(index){
+        $state.go('edit', { id : trashcan._id });
+        return true;
+      }
+    });
+  };
+
+  vm.fetch();
 
 }])
 

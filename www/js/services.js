@@ -68,7 +68,7 @@ angular.module('starter.services', [])
         var trashcans = response.data;
         trashcans.forEach(function(t){
           //specify position
-          t.position = [t.pointY, t.pointX];
+          t.position = [t.latitude, t.longitude];
 
           //calculate wait time
           var rt= t.requestDate && new Date(t.requestDate);
@@ -113,9 +113,9 @@ angular.module('starter.services', [])
     },
 
 
-    updateTrashcan : function(task) {
+    updateTrashcan : function(trashcan) {
       var deffered = $q.defer();
-      Stamplay.Object("trashcan").update(task._id, task)
+      Stamplay.Object("trashcan").update(trashcan._id, trashcan)
       .then(function(response) {
         deffered.resolve(response);
       }, function(err) {

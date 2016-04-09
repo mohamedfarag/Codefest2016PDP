@@ -16,7 +16,7 @@
         <button ui-sref="schedule-pickup" class="button button-full button-dark bold">Schedule Trash Pickup</button>
         <button ui-sref="pickup-trash" class="button button-full button-dark bold">Pickup Trash</button>
         <hr>
-        <button ui-sref="trashcans" class="button button-full button-dark bold">Trash Cans (remove me)</button>
+        <button ui-sref="trashcans" class="button button-full button-dark bold" ng-show="user.givenRole===roles.admin">Manage Trash Cans</button>
         <button ui-sref="criteria" class="button button-full button-dark bold" ng-show="user.givenRole===roles.admin">Statistics</button>
         <button ng-click="account.logout()" class="button button-full button-stable bold">Logout</button>
       </div>
