@@ -193,4 +193,85 @@ angular.module('starter.services', [])
 
   };
 
-}]);
+}])
+
+
+.factory('ZoomService', ["$rootScope", "$q", "NgMap", "$window", function($rootScope, $q, NgMap, $window) {
+
+     var WORLD_DIM = { height: 256, width: 256 };
+     var ZOOM_MAX = 21;
+
+     function latRad(lat) {
+         var sin = Math.sin(lat * Math.PI / 180);
+         var radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+         return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+     }
+
+     function zoom(mapPx, worldPx, fraction) {
+         return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
+     }
+
+     function calculateBounds(points) {
+       var maxLatitude = -100, minLatitude = 100,
+           maxLongitude = -200, minLongitude = 200;
+
+        points.forEach(function(p){
+          maxLatitude = Math.max(maxLatitude, p.latitude);
+          minLatitude = Math.min(minLatitude, p.latitude);
+          maxLongitude = Math.max(maxLongitude, p.longitude);
+          minLongitude = Math.min(minLongitude, p.longitude);
+        });
+
+        var ne = {
+          latitude: maxLatitude, longitude: maxLongitude
+        };
+        var sw = {
+          latitude: minLatitude, longitude: minLongitude
+        };
+        return [ne, sw];
+     }
+
+  return {
+
+    getExtentFor : function(points, mapId){
+
+        //HACK: this is a hack, there didn't seem to be anyway to
+        //      determine the screen size of the map, so since all maps
+        //      should be full screen, this is the work around
+        var mapDim = {
+          height: $window.innerHeight, width: $window.innerWidth
+        };
+
+        var bounds = calculateBounds(points);
+        var ne = bounds[0];
+        var sw = bounds[1];
+
+
+        var latFraction = (latRad(ne.latitude) - latRad(sw.latitude)) / Math.PI;
+
+        var lngDiff = ne.longitude - sw.longitude;
+        var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+        var latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
+        var lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
+
+        var zoomLevel = Math.min(latZoom, lngZoom, ZOOM_MAX);
+
+        var extent = {
+          center: {
+            latitude: (ne.latitude + sw.latitude)/2,
+            longitude: (ne.longitude + sw.longitude)/2
+          },
+          zoom: zoomLevel
+        };
+
+        //NOTE: this returns a false because it is believed that the code needs
+        //      to wait for the map before trying getting its width/height
+        //      if that is fixed in the future, then a promise will have to be
+        //      returned
+        return $q.when(extent);
+    }
+  };
+
+}])
+;

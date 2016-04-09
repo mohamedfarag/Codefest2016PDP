@@ -10,34 +10,12 @@
   </ion-nav-bar>
   <ion-content scroll="false">
     <div  class="mapWrap" ng-hide="trashcan.trashcans.length === 0">
-      <ng-map class="pdpmap" zoom="14" center="[40.4406, -79.9959]">
+      <ng-map class="pdpmap" zoom="{{trashcan.zoom}}" center="{{trashcan.center}}">
        <marker ng-repeat="t in trashcan.trashcans" position="{{t.position}}"
          icon="{{t.icon}}" title="{{t.id}} ({{t.trashbags}})" on-click="trashcan.openActionSheet(t)"></marker>
       </ng-map>
     </div>
-    <!--
-    <ion-list can-swipe="true">
-      <ion-item ng-repeat="item in trashcan.trashcans" ng-class="{ 'active' : item.id === trashcan.active }">
 
-          <div>
-            <p>{{ item.trashcanName }}</p>
-            <p>Trash Bags: {{ item.trashbags }}</p>
-            <p ng-show="item.requestDate">Pickup requested: {{item.requestDate | date:'MMM dd yyyy h:mm:ss a'}}</p>
-            <button class="button icon-left button-positive ion-plus-round" ng-click="trashcan.addBag(item)">
-              Add Bag
-            </button>
-            <button ng-show="item.requestDate" class="button icon-left button-balanced ion-checkmark-round" ng-click="trashcan.clearBags(item)">
-              Clear Bags
-            </button>
-          </div>
-
-      <ion-option-button class="button-energized ion-edit"
-      ui-sref="edit({ id : item._id })"></ion-option-button>
-      <ion-option-button class="button-assertive ion-trash-a"
-      ng-click="trashcan.deleteTrashcan(item._id)" ng-show="user.givenRole===roles.admin"></ion-option-button>
-      </ion-item>
-    </ion-list>
-    -->
     <div class="card" ng-show="trashcan.trashcans.length === 0">
       <div class="item item-body center-align">
         <h2 class="dark">

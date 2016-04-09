@@ -63,7 +63,7 @@ angular.module('starter.controllers', [])
     };
   }])
 
-.controller('HomeController', ["TrashService", "$ionicLoading", "$ionicActionSheet", "$state", function(TrashService,  $ionicLoading, $ionicActionSheet, $state) {
+.controller('HomeController', ["TrashService", "$ionicLoading", "$ionicActionSheet", "$state", "ZoomService", function(TrashService,  $ionicLoading, $ionicActionSheet, $state, zoomService) {
   var vm = this;
 
   var findIndex = function(id) {
@@ -81,13 +81,20 @@ angular.module('starter.controllers', [])
   // Fetch Cans
   vm.fetch = function() {
     $ionicLoading.show();
-    TrashService.getAllTrashCans()
+    return TrashService.getAllTrashCans()
     .then(
       function(trashcans) {
         vm.trashcans = trashcans;
         vm.trashcans.forEach(addStandardTrashCanSymbology);
-        $ionicLoading.hide();
-      }, function() {
+
+        return zoomService.getExtentFor(trashcans,'schedule-pickup-map').then(function(extent){
+           vm.center = [extent.center.latitude, extent.center.longitude];
+           vm.zoom = extent.zoom;
+           return vm.trashcans;
+        }).catch(function(e){
+          console.error('failed to load extent', e);
+        });
+      }).finally(function(){
         $ionicLoading.hide();
       });
 
@@ -190,7 +197,9 @@ angular.module('starter.controllers', [])
   function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope,$cordovaGeolocation,$ionicActionSheet) {
     var vm = this;
 
-    var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation);
+    var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation, function(p){
+      vm.center = [p.latitude, p.longitude];
+    });
     addTrachcanFetch(vm, $ionicLoading, TrashService, addStandardTrashCanSymbology);
 
     function incrementBagCount(trashcan){
@@ -201,9 +210,7 @@ angular.module('starter.controllers', [])
         }).finally(function(){
           $ionicLoading.hide();
         });
-      };
-
-   
+      }
 
      vm.scheduleTrashcan = function(e, trashcan) {
 
@@ -231,11 +238,17 @@ angular.module('starter.controllers', [])
      vm.fetch(true);
 
   }])
-.controller('PickupTrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope","$cordovaGeolocation", "$ionicActionSheet",
-  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope, $cordovaGeolocation, $ionicActionSheet) {
+.controller('PickupTrashController', ["TrashService", "$ionicLoading", "$rootScope", "$state", "$stateParams", "$ionicModal", "$scope","$cordovaGeolocation", "$ionicActionSheet", "ZoomService",
+  function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope, $cordovaGeolocation, $ionicActionSheet, zoomService) {
     var vm = this;
 
-    var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation);
+    vm.truck = {
+      icon: "images/truck-marker.png"
+    };
+
+    var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation, function(p){
+      vm.truck.position = [p.latitude, p.longitude];
+    });
     addTrachcanFetch(vm, $ionicLoading, TrashService, addStandardTrashCanSymbology);
 
       function markBagsPickedUp(trashcan){
@@ -247,7 +260,7 @@ angular.module('starter.controllers', [])
         }).finally(function(){
           $ionicLoading.hide();
         });
-      };
+      }
 
 
      vm.clearTrashcan = function(e, trashcan) {
@@ -273,7 +286,14 @@ angular.module('starter.controllers', [])
        deregregisterGeolocationUpdates();
      });
 
-     vm.fetch(true);
+     vm.fetch(true).then(function(trashcans){
+       zoomService.getExtentFor(trashcans,'schedule-pickup-map').then(function(extent){
+          vm.center = [extent.center.latitude, extent.center.longitude];
+          vm.zoom = extent.zoom;
+       }).catch(function(e){
+         console.error('failed to load extent', e);
+       });
+     });
 
   }])
 
@@ -290,14 +310,9 @@ angular.module('starter.controllers', [])
     };
 }])
 
-.controller('StatsController', ["HistoryService", "$ionicLoading", "$rootScope", "$scope", "$state", "$stateParams", "$cordovaGeolocation",
-  function(HistoryService,  $ionicLoading, $rootScope, $scope, $state, $stateParams, $cordovaGeolocation) {
+.controller('StatsController', ["HistoryService", "$ionicLoading", "$rootScope", "$scope", "$state", "$stateParams", "$cordovaGeolocation", "ZoomService",
+  function(HistoryService,  $ionicLoading, $rootScope, $scope, $state, $stateParams, $cordovaGeolocation, zoomService) {
   var vm = this;
-
-  var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation);
-  $scope.$on('$destroy', function() {
-    deregregisterGeolocationUpdates();
-  });
 
   function fetch() {
     $ionicLoading.show();
@@ -305,17 +320,20 @@ angular.module('starter.controllers', [])
       from: new Date($stateParams.startTimestamp),
       to: new Date($stateParams.endTimestamp)
     };
-    HistoryService.getHistory(criteria).then(function(trashcans){
+    return HistoryService.getHistory(criteria).then(function(trashcans){
       trashcans.forEach(addAveragePerDayTrashCanSymbology);
       vm.trashcans = trashcans;
+
+      return zoomService.getExtentFor(trashcans).then(function(extent){
+         vm.center = [extent.center.latitude, extent.center.longitude];
+         vm.zoom = extent.zoom;
+      });
     }, function(e){
       console.log('error loading stats',e);
     }).finally(function(){
       $ionicLoading.hide();
     });
   }
-
-
   fetch();
 }])
 ;
@@ -339,11 +357,10 @@ function addStandardTrashCanSymbology(trashcan) {
     };
 }
 
-function registerGeolocationUpdates(vm, $cordovaGeolocation) {
+function registerGeolocationUpdates(vm, $cordovaGeolocation, cb) {
   var timestamp = new Date().getTime();
   var watchOptions = {timeout : 3000, enableHighAccuracy: false};
   var watch = $cordovaGeolocation.watchPosition(watchOptions);
-  vm.center = null;
 
   watch.then(
      null,
@@ -353,8 +370,8 @@ function registerGeolocationUpdates(vm, $cordovaGeolocation) {
      },
 
      function(position) {
-       console.log('updating pos', position);
-       vm.center = [position.coords.latitude,position.coords.longitude];
+       console.log('updated current pos', position);
+       cb(position.coords);
      }
   );
 
@@ -369,13 +386,14 @@ function addTrachcanFetch(vm, $ionicLoading, TrashService, augmenter) {
     if(spinner){
       $ionicLoading.show();
     }
-    TrashService.getAllTrashCans()
+    return TrashService.getAllTrashCans()
     .then(
       function(trashcans) {
         vm.trashcans = trashcans;
 
         //set symbology
         vm.trashcans.forEach(augmenter);
+        return vm.trashcans;
       }).finally(function(){
         if(spinner){
           $ionicLoading.hide();

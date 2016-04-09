@@ -10,7 +10,8 @@
   </ion-nav-bar>
   <ion-content scroll="false">
     <div class="mapWrap"  data-tap-disabled="true">
-      <ng-map class="pdpmap" center="{{ctrl.center}}" zoom="14" ng-if="ctrl.center">
+      <ng-map class="pdpmap" center="{{ctrl.center}}" zoom="{{ctrl.zoom}}">
+       <marker position="{{ctrl.truck.position}}" icon="{{ctrl.truck.icon}}" title="You are here"></marker>
        <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
          icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})" on-click="ctrl.clearTrashcan(t)"></marker>
       </ng-map>

@@ -6,7 +6,7 @@
     </ion-nav-title>
   </ion-nav-bar>
   <ion-content>
-    <ng-map center="{{ctrl.center}}" zoom="14" ng-if="ctrl.center">
+    <ng-map center="{{ctrl.center}}" zoom="{{ctrl.zoom}}">
      <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
        icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})"></marker>
     </ng-map>
