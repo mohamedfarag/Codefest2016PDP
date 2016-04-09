@@ -6,19 +6,30 @@
     </ion-nav-title>
   </ion-nav-bar>
   <ion-content>
+    <label class="item item-input item-select">
+      <div class="input-label">
+        Stat
+      </div>
+      <select ng-model="ctrl.stat" ng-change="ctrl.recalcSymbols()">
+        <option value="total">Total</option>
+        <option value="averageBagsPerDay">Average Bags Per Day</option>
+        <option value="averageWaitingBags">Average Waiting Bags</option>
+      </select>
+    </label>
     <ng-map center="{{ctrl.center}}" zoom="{{ctrl.zoom}}">
      <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
        icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})"></marker>
     </ng-map>
 
     <div class="list">
-      <div class="item item-icon-left" ng-repeat="item in ctrl.trashcans">
+      <div class="item item-icon-left" ng-repeat="item in ctrl.trashcans | orderBy: ctrl.orderByStat():true ">
         <i class="icon ion-trash-a"></i>
         <p>Name: {{item.name}}</p>
         <p>Latitude: {{item.latitude|number:6}}</p>
         <p>Longitude: {{item.longitude|number:6}}</p>
         <p>Total: {{item.stats.total|number:0}}</p>
-        <p>Average: {{item.stats.averagePerDay|number:2}}</p>
+        <p>Average Bags Per Day: {{item.stats.averageBagsPerDay|number:2}}</p>
+        <p>Average Waiting Bags: {{item.stats.averageWaitingBags|number:2}}</p>
       </div>
     </div>
 

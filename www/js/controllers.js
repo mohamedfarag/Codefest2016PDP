@@ -377,6 +377,17 @@ angular.module('starter.controllers', [])
   function(HistoryService,  $ionicLoading, $rootScope, $scope, $state, $stateParams, $cordovaGeolocation, zoomService) {
   var vm = this;
 
+  vm.stat = "averageBagsPerDay";
+  vm.orderByStat = function(){
+    return function(t){
+      return t.stats[vm.stat];
+    };
+  };
+
+  vm.recalcSymbols = function(){
+    vm.trashcans.forEach(addStatSymbology(vm.stat));
+  };
+
   function fetch() {
     $ionicLoading.show();
     var criteria = {
@@ -384,7 +395,7 @@ angular.module('starter.controllers', [])
       to: new Date($stateParams.endTimestamp)
     };
     return HistoryService.getHistory(criteria).then(function(trashcans){
-      trashcans.forEach(addAveragePerDayTrashCanSymbology);
+      trashcans.forEach(addStatSymbology(vm.stat));
       vm.trashcans = trashcans;
 
       return zoomService.getExtentFor(trashcans).then(function(extent){
@@ -419,11 +430,13 @@ function determineSymbolColor(trashcan){
   return symbolColor;
 }
 
-function addAveragePerDayTrashCanSymbology(trashcan) {
-    var radius = Math.ceil(Math.max(0.5,trashcan.stats.averagePerDay)*2);
-    var color = determineSymbolColor(trashcan);
-    trashcan.icon = {
-        path:buildCirclePath(radius), strokeColor: color, fillColor: color, fillOpacity: 1
+function addStatSymbology(stat){
+  return function(trashcan) {
+      var radius = Math.ceil(Math.max(0.5,trashcan.stats[stat])*2);
+      var color = determineSymbolColor(trashcan);
+      trashcan.icon = {
+          path:buildCirclePath(radius), strokeColor: color, fillColor: color, fillOpacity: 1
+      };
     };
 }
 

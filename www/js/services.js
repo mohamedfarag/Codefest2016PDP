@@ -157,15 +157,43 @@ angular.module('starter.services', [])
           return TrashService.getAllTrashCans();
         })
         .then(function(trashcans){
-          var trashMap = {};
+          var averageBagsPerDayTrashMap = {};
+          var averageWaitingBagsTrashMap = {};
+          var historyGroup = {};
           var oldestDate = new Date();
           history.forEach(function(entry){
             var trashcanId = entry.trashcan[0];
-            if(!trashMap[trashcanId]){
-              trashMap[trashcanId] = 0;
+
+            if(!historyGroup[trashcanId]){
+              historyGroup[trashcanId] = [];
             }
-            trashMap[trashcanId] = trashMap[trashcanId] + entry.trashbags;
+            historyGroup[trashcanId].push(entry);
+
+            if(!averageBagsPerDayTrashMap[trashcanId]){
+              averageBagsPerDayTrashMap[trashcanId] = 0;
+            }
+            averageBagsPerDayTrashMap[trashcanId] = averageBagsPerDayTrashMap[trashcanId] + entry.trashbags;
             oldestDate = Math.min(oldestDate, new Date(entry.dt_create));
+          });
+
+          var now = new Date();
+          trashcans.forEach(function(trashcan){
+            if(!historyGroup[trashcan._id]) {
+              return;
+            }
+            historyGroup[trashcan._id].sort(function(a,b){
+              return new Date(a.dt_create) - new Date(b.dt_create);
+            });
+            historyGroup[trashcan._id].push({dt_create: now});
+
+            var avg = 0;
+            var total = 0;
+            for(var i = 0;i<historyGroup[trashcan._id].length-1;i++) {
+              var duration = new Date(historyGroup[trashcan._id][i+1].dt_create).getTime() - new Date(historyGroup[trashcan._id][i].dt_create).getTime();
+              total += duration;
+              avg += duration * historyGroup[trashcan._id][i].trashbags;
+            }
+            averageWaitingBagsTrashMap[trashcan._id] = avg/total;
           });
 
           var partialDays = (criteria.to.getTime() - Math.max(criteria.from, oldestDate))/(24*60*60*1000);
@@ -173,8 +201,9 @@ angular.module('starter.services', [])
 
           trashcans.forEach(function(trashcan){
             trashcan.stats = {
-              total: trashMap[trashcan._id] || 0,
-              averagePerDay: (trashMap[trashcan._id] || 0)/days
+              total: averageBagsPerDayTrashMap[trashcan._id] || 0,
+              averageBagsPerDay: (averageBagsPerDayTrashMap[trashcan._id] || 0)/days,
+              averageWaitingBags: (averageWaitingBagsTrashMap[trashcan._id] || 0)
             };
           });
 
