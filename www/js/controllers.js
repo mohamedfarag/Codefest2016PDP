@@ -18,6 +18,7 @@ angular.module('starter.controllers', [])
       Stamplay.User.login(vm.user)
       .then(function(user) {
         $rootScope.user = user;
+        $ionicLoading.hide();
         $state.go("home");
       }, function() {
         $ionicLoading.hide();
@@ -37,6 +38,7 @@ angular.module('starter.controllers', [])
       Stamplay.User.signup(vm.user)
       .then(function(user) {
         $rootScope.user = user;
+        $ionicLoading.hide();
         $state.go("home");
       }, function() {
         errorHandler({
