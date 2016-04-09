@@ -190,43 +190,8 @@ angular.module('starter.controllers', [])
   function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope,$cordovaGeolocation) {
     var vm = this;
 
-
-        var watchOptions = {timeout : 3000, enableHighAccuracy: false};
-        var watch = $cordovaGeolocation.watchPosition(watchOptions);
-
-        watch.then(
-           null,
-
-           function(err) {
-              console.log(err)
-           },
-
-           function(position) {
-             vm.center = [position.coords.latitude,position.coords.longitude];
-           }
-        );
-
-    vm.center = null;
-
-    vm.fetch = function(spinner) {
-      if(spinner){
-        $ionicLoading.show();
-      }
-      TrashService.getAllTrashCans()
-      .then(
-        function(trashcans) {
-          vm.trashcans = trashcans;
-
-          //set symbology
-          vm.trashcans.forEach(addStandardTrashCanSymbology);
-        }).finally(function(){
-          if(spinner){
-            $ionicLoading.hide();
-          }
-        });
-
-    };
-
+    var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation);
+    addTrachcanFetch(vm, $ionicLoading, TrashService, addStandardTrashCanSymbology);
 
     var modalScope = $scope.$new();
     modalScope.incrementBagCount =  function(){
@@ -256,7 +221,7 @@ angular.module('starter.controllers', [])
      };
 
      $scope.$on('$destroy', function() {
-       watch.clearWatch();
+       deregregisterGeolocationUpdates();
        modalPopup.remove();
      });
 
@@ -267,44 +232,8 @@ angular.module('starter.controllers', [])
   function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope, $cordovaGeolocation) {
     var vm = this;
 
-
-    var watchOptions = {timeout : 3000, enableHighAccuracy: false};
-    var watch = $cordovaGeolocation.watchPosition(watchOptions);
-
-    watch.then(
-       null,
-
-       function(err) {
-          console.log(err)
-       },
-
-       function(position) {
-         vm.center = [position.coords.latitude,position.coords.longitude];
-       }
-    );
-
-
-
-    vm.center = null;
-
-    vm.fetch = function(spinner) {
-      if(spinner){
-        $ionicLoading.show();
-      }
-      TrashService.getAllTrashCans()
-      .then(
-        function(trashcans) {
-          vm.trashcans = trashcans;
-
-          //set symbology
-          vm.trashcans.forEach(addStandardTrashCanSymbology);
-        }).finally(function(){
-          if(spinner){
-            $ionicLoading.hide();
-          }
-        });
-
-    };
+    var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation);
+    addTrachcanFetch(vm, $ionicLoading, TrashService, addStandardTrashCanSymbology);
 
     var modalScope = $scope.$new();
     modalScope.markBagsPickedUp =  function(){
@@ -335,8 +264,7 @@ angular.module('starter.controllers', [])
      };
 
      $scope.$on('$destroy', function() {
-
-          watch.clearWatch();
+       deregregisterGeolocationUpdates();
        modalPopup.remove();
      });
 
@@ -371,4 +299,49 @@ function addStandardTrashCanSymbology(trashcan) {
     trashcan.icon = {
         path:'CIRCLE', scale: 4, strokeColor: color
     };
+}
+
+function registerGeolocationUpdates(vm, $cordovaGeolocation) {
+  var watchOptions = {timeout : 3000, enableHighAccuracy: false};
+  var watch = $cordovaGeolocation.watchPosition(watchOptions);
+
+  vm.center = null;
+
+  watch.then(
+     null,
+
+     function(err) {
+        console.log(err)
+     },
+
+     function(position) {
+       console.log('updating pos', position);
+       vm.center = [position.coords.latitude,position.coords.longitude];
+     }
+  );
+
+  return function deregisterGeolocationUpdates(){
+    watch.clearWatch();
+  };
+}
+
+
+function addTrachcanFetch(vm, $ionicLoading, TrashService, augmenter) {
+  vm.fetch = function(spinner) {
+    if(spinner){
+      $ionicLoading.show();
+    }
+    TrashService.getAllTrashCans()
+    .then(
+      function(trashcans) {
+        vm.trashcans = trashcans;
+
+        //set symbology
+        vm.trashcans.forEach(augmenter);
+      }).finally(function(){
+        if(spinner){
+          $ionicLoading.hide();
+        }
+      });
+  };
 }
