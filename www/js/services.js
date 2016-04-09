@@ -145,9 +145,6 @@ angular.module('starter.services', [])
     getHistory : function(criteria){
       criteria.from = criteria.from || new Date(0);
       criteria.to = criteria.to || new Date();
-      var partialDays = (criteria.to.getTime() - criteria.from.getTime())/(24*60*60*1000);
-      var days =  Math.floor(partialDays)+1;
-      console.log('datys', partialDays, days);
       var history;
       var trashcans;
       return Stamplay.Query("object", "history")
@@ -161,13 +158,18 @@ angular.module('starter.services', [])
         })
         .then(function(trashcans){
           var trashMap = {};
+          var oldestDate = new Date();
           history.forEach(function(entry){
             var trashcanId = entry.trashcan[0];
             if(!trashMap[trashcanId]){
               trashMap[trashcanId] = 0;
             }
             trashMap[trashcanId] = trashMap[trashcanId] + entry.trashbags;
+            oldestDate = Math.min(oldestDate, new Date(entry.dt_create));
           });
+
+          var partialDays = (criteria.to.getTime() - Math.max(criteria.from, oldestDate))/(24*60*60*1000);
+          var days =  Math.floor(partialDays)+1;
 
           trashcans.forEach(function(trashcan){
             trashcan.stats = {
