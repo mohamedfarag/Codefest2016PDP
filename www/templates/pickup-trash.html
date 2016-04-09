@@ -4,17 +4,16 @@
     <ion-nav-title>
       Pickup Trash
     </ion-nav-title>
+    <ion-nav-buttons side="right">
+      <button class="button button-icon icon ion-android-car"></button>
+    </ion-nav-buttons>
   </ion-nav-bar>
-  <ion-content>
-
-    <ng-map center="{{ctrl.center}}" zoom="14" ng-if="ctrl.center">
-     <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
-       icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})" on-click="ctrl.clearTrashcan(t)"></marker>
-    </ng-map>
-
-    <button class="button icon-left button-positive ion-map" ng-click="trashcan.addBag(item)">
-      Calculate Pickup Route
-    </button>
-
+  <ion-content scroll="false">
+    <div class="mapWrap"  data-tap-disabled="true">
+      <ng-map class="pdpmap" center="{{ctrl.center}}" zoom="14" ng-if="ctrl.center">
+       <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
+         icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})" on-click="ctrl.clearTrashcan(t)"></marker>
+      </ng-map>
+    </div>
   </ion-content>
 </ion-view>

@@ -5,12 +5,12 @@
       Schedule Pickup
     </ion-nav-title>
   </ion-nav-bar>
-  <ion-content>
-
-    <ng-map center="{{ctrl.center}}" zoom="14" ng-if="ctrl.center">
-     <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
-       icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})" on-click="ctrl.scheduleTrashcan(t)"></marker>
-    </ng-map>
-
+  <ion-content scroll="false">
+    <div class="mapWrap"  data-tap-disabled="true">
+      <ng-map class="pdpmap" center="{{ctrl.center}}" zoom="14" ng-if="ctrl.center" >
+       <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
+         icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})" on-click="ctrl.scheduleTrashcan(t)"></marker>
+      </ng-map>
+    </div>
   </ion-content>
 </ion-view>
