@@ -226,7 +226,7 @@ angular.module('starter.controllers', [])
           {text : 'Add Bag'}
         ],
         cancelText : 'Cancel',
-        titleText : 'Bags: ' + trashcan.trashbags,
+        titleText : trashcan.category + " (" + trashcan.trashcanType + '); ' +'Bags: ' + trashcan.trashbags,
         cancel: function(){
           return true;
         },
@@ -282,12 +282,17 @@ angular.module('starter.controllers', [])
 
      vm.clearTrashcan = function(e, trashcan) {
 
+       var titleText = trashcan.category + " (" + trashcan.trashcanType + '); ' +'Bags: ' + trashcan.trashbags;
+       if(trashcan.waitTimeInHours) {
+         titleText += '; ' + 'Waiting: ' + trashcan.waitTimeInHours.toFixed(2)  +' hours';
+       }
+
       var sheet = $ionicActionSheet.show({
         buttons: [
           {text : 'Clear Bags'}
         ],
         cancelText : 'Cancel',
-        titleText : 'Bags: ' + trashcan.trashbags,
+        titleText : titleText,
         cancel: function(){
           return true;
         },
