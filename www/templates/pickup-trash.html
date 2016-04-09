@@ -6,7 +6,8 @@
     </ion-nav-title>
     <ion-nav-buttons side="right">
       <button class="button button-icon icon" ng-class="{'ion-eye': ctrl.showAll,'ion-eye-disabled': !ctrl.showAll}" ng-click="ctrl.toggleShowAll()"></button>
-      <button class="button button-icon icon ion-android-car" ng-click="ctrl.determineRoute()"></button>
+      <button class="button button-icon icon ion-android-car" ng-click="ctrl.determineRoute(true)"></button>
+      <button class="button button-icon icon ion-close-circled" ng-click="ctrl.cancelRoute()" ng-if="ctrl.directionsRequest"></button>
     </ion-nav-buttons>
   </ion-nav-bar>
   <ion-content scroll="false">

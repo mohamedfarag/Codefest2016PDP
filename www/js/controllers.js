@@ -273,7 +273,7 @@ angular.module('starter.controllers', [])
         $ionicLoading.show();
 
         TrashService.clearBags(trashcan).then(function(){
-          return vm.fetch(false);
+          return refreshRoute();
         }).finally(function(){
           $ionicLoading.hide();
         });
@@ -316,8 +316,16 @@ angular.module('starter.controllers', [])
 
      refresh();
 
-     vm.determineRoute = function(){
-       return refresh().then(function(){
+     function refreshRoute(spinner) {
+       if(vm.directionsRequest) {
+         return vm.determineRoute(spinner);
+       } else {
+         return refresh(spinner);
+       }
+     }
+
+     vm.determineRoute = function(spinner){
+       return refresh(spinner).then(function(){
 
          var needsPickedUp = vm.trashcans.filter(function(f){
            return f.trashbags > 0;
@@ -339,6 +347,10 @@ angular.module('starter.controllers', [])
 
        });
      };
+
+     vm.cancelRoute = function(){
+       vm.directionsRequest = null;
+     }
 
   }])
 
