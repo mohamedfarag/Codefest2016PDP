@@ -8,9 +8,9 @@
       <a ng-show="user.givenRole==='5704843eea731cc530dd3a46'" class="button button-icon icon ion-plus-circled" ui-sref="new"></a>
     </ion-nav-buttons>
   </ion-nav-bar>
-  <ion-content>
-    <div ng-hide="trashcan.trashcans.length === 0">
-      <ng-map zoom="14" center="[40.4406, -79.9959]">
+  <ion-content scroll="false">
+    <div  class="mapWrap" ng-hide="trashcan.trashcans.length === 0">
+      <ng-map class="pdpmap" zoom="14" center="[40.4406, -79.9959]">
        <marker ng-repeat="t in trashcan.trashcans" position="{{t.position}}"
          icon="{{t.icon}}" title="{{t.id}} ({{t.trashbags}})" on-click="trashcan.openActionSheet(t)"></marker>
       </ng-map>
