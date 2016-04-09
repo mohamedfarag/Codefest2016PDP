@@ -9,6 +9,28 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 
 .run(function($ionicPlatform, $rootScope, AccountService) {
 
+  //TODO uncomment this to debug state transitions
+  // $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
+  //   console.debug('$stateChangeStart to '+toState.name+'- fired when the transition begins. toState,toParams : \n',toState, toParams);
+  // });
+  // $rootScope.$on('$stateChangeError',function(event, toState, toParams, fromState, fromParams){
+  //   console.debug('$stateChangeError - fired when an error occurs during transition.');
+  //   console.debug(arguments);
+  // });
+  //   $rootScope.$on('$stateChangeSuccess',function(event, toState, toParams, fromState, fromParams){
+  //   console.debug('$stateChangeSuccess to '+toState.name+'- fired once the state transition is complete.');
+  // });
+  //   $rootScope.$on('$viewContentLoaded',function(event){
+  //   console.debug('$viewContentLoaded - fired after dom rendered',event);
+  // });
+  // $rootScope.$on('$stateNotFound',function(event, unfoundState, fromState, fromParams){
+  //   console.debug('$stateNotFound '+unfoundState.name+' - fired when a state cannot be found by its name.');
+  //   console.debug(unfoundState, fromState, fromParams);
+  // });
+
+
+
+
   AccountService.currentUser()
     .then(function(user) {
       $rootScope.user = user;
@@ -99,15 +121,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       controller: "TrashController",
       controllerAs : "edit"
     }).state('criteria', {
-      url: '/history/criteria',
+      url: '/historySearch',
       templateUrl: 'templates/stats-criteria.html',
-      controller: "StatsController",
-      controllerAs : "stats"
+      controller: "StatsQueryController",
+      controllerAs : "ctrl"
     }).state('stats', {
-      url: '/history/result',
+      url: '/history/{startTimestamp:int}/{endTimestamp:int}',
       templateUrl: 'templates/stats-result.html',
       controller: "StatsController",
-      controllerAs : "stats"
+      controllerAs : "ctrl"
     });
 
 

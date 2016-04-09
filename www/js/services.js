@@ -145,6 +145,8 @@ angular.module('starter.services', [])
     getHistory : function(criteria){
       criteria.from = criteria.from || new Date(0);
       criteria.to = criteria.to || new Date();
+      var partialDays = (criteria.to.getTime() - criteria.from.getTime())/(24*60*60*1000);
+      var days =  Math.ceil(partialDays);
       var history;
       var trashcans;
       return Stamplay.Query("object", "history")
@@ -158,7 +160,6 @@ angular.module('starter.services', [])
         })
         .then(function(trashcans){
           var trashMap = {};
-          results = [];
           history.forEach(function(entry){
             var trashcanId = entry.trashcan[0];
             if(!trashMap[trashcanId]){
@@ -168,17 +169,18 @@ angular.module('starter.services', [])
           });
 
           trashcans.forEach(function(trashcan){
-            results.push({
-              latitude : trashcan.latitude,
-              longitude : trashcan.longitude,
-              name : trashcan.trashcanName,
-              count : trashMap[trashcan._id] || 0
-            });
+            trashcan.stats = {
+              total: trashMap[trashcan._id] || 0,
+              averagePerDay: trashMap[trashcan._id] || 0
+            };
           });
 
-          results.sort(compareCount).reverse();
+          trashcans.sort(function(a,b){
+            return a.stats.averagePerDay - b.stats.averagePerDay;
+          }).reverse();
 
-
+          results = trashcans;
+          return trashcans;
         });
     },
 

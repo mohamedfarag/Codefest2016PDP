@@ -9,7 +9,7 @@
 
     <ng-map center="{{ctrl.center}}" zoom="14" ng-if="ctrl.center">
      <marker ng-repeat="t in ctrl.trashcans" position="{{t.position}}"
-       icon="{{t.icon}}" title="{{t.id}} ({{t.trashbags}})" on-click="ctrl.clearTrashcan(t)"></marker>
+       icon="{{t.icon}}" title="{{t.name}} ({{t.trashbags}})" on-click="ctrl.clearTrashcan(t)"></marker>
     </ng-map>
 
     <button class="button icon-left button-positive ion-map" ng-click="trashcan.addBag(item)">

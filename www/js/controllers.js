@@ -249,21 +249,46 @@ angular.module('starter.controllers', [])
 
   }])
 
-.controller('StatsController', ["HistoryService", "$ionicLoading", "$rootScope", "$state", "$stateParams", function(HistoryService,  $ionicLoading, $rootScope, $state, $stateParams) {
+.controller('StatsQueryController', ["$state",
+  function($state) {
   var vm = this;
   vm.criteria = {};
-  vm.results = HistoryService.getResults();
-  //vm.criteria.searchType = 'average';
   vm.search = function(){
+    var params = {
+      startTimestamp: (vm.criteria.from || new Date(0)).getTime(),
+      endTimestamp: (vm.criteria.to || new Date()).getTime(),
+    };
+    $state.go("stats", params);
+    };
+}])
+
+.controller('StatsController', ["HistoryService", "$ionicLoading", "$rootScope", "$scope", "$state", "$stateParams", "$cordovaGeolocation",
+  function(HistoryService,  $ionicLoading, $rootScope, $scope, $state, $stateParams, $cordovaGeolocation) {
+  var vm = this;
+
+  var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation);
+  $scope.$on('$destroy', function() {
+    deregregisterGeolocationUpdates();
+  });
+
+  function fetch() {
     $ionicLoading.show();
-    HistoryService.getHistory(vm.criteria).then(function(){
-      $ionicLoading.hide();
-      $state.go("stats");
-    }, function(){
+    var criteria = {
+      from: new Date($stateParams.startTimestamp),
+      to: new Date($stateParams.endTimestamp)
+    };
+    HistoryService.getHistory(criteria).then(function(trashcans){
+      trashcans.forEach(addStandardTrashCanSymbology);
+      vm.trashcans = trashcans;
+    }, function(e){
+      console.log('error loading stats',e);
+    }).finally(function(){
       $ionicLoading.hide();
     });
-  };
+  }
 
+
+  fetch();
 }])
 ;
 
@@ -279,9 +304,10 @@ function addStandardTrashCanSymbology(trashcan) {
 }
 
 function registerGeolocationUpdates(vm, $cordovaGeolocation) {
+  var timestamp = new Date().getTime();
   var watchOptions = {timeout : 3000, enableHighAccuracy: false};
   var watch = $cordovaGeolocation.watchPosition(watchOptions);
-
+  console.log('register', timestamp);
   vm.center = null;
 
   watch.then(
@@ -298,6 +324,7 @@ function registerGeolocationUpdates(vm, $cordovaGeolocation) {
   );
 
   return function deregisterGeolocationUpdates(){
+      console.log('deregister', timestamp);
     watch.clearWatch();
   };
 }

@@ -11,7 +11,7 @@
   <ion-content ng-init="trashcan.fetch()">
     <ion-list can-swipe="true">
       <ion-item ng-repeat="item in trashcan.trashcans" ng-class="{ 'active' : item.id === trashcan.active }">
-        
+
           <div>
             <p>{{ item.trashcanName }}</p>
             <p>Trash Bags: {{ item.trashbags }}</p>
@@ -23,7 +23,7 @@
               Clear Bags
             </button>
           </div>
-        
+
       <ion-option-button class="button-energized ion-edit"
       ui-sref="edit({ id : item._id })"></ion-option-button>
       <ion-option-button class="button-assertive ion-trash-a"

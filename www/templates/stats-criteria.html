@@ -12,24 +12,15 @@
         From
       </div>
       <label class="item item-input">
-        <input type="date" placeholder="From" ng-model="stats.criteria.from">
+        <input type="date" placeholder="From" ng-model="ctrl.criteria.from">
       </label>
       <div class="item item-divider">
         To
       </div>
       <label class="item item-input">
-        <input type="date" placeholder="To" ng-model="stats.criteria.to">
+        <input type="date" placeholder="To" ng-model="ctrl.criteria.to">
       </label>
-      <!--
-      <div class="item item-divider">
-        Report Types
-      </div>
-      <ion-list>
-        <ion-radio ng-model="stats.criteria.searchType" ng-value="'average'">Average Bags per Can</ion-radio>
-        <ion-radio ng-model="stats.criteria.searchType" ng-value="'busy'">Busiest Cans</ion-radio>
-      </ion-list>
-      -->
-      <button class="button button-full button-positive" ng-click="stats.search()">Submit</button>
+      <button class="button button-full button-positive" ng-click="ctrl.search()">Submit</button>
     </div>
   </ion-content>
 </ion-view>
