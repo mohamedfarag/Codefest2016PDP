@@ -338,22 +338,53 @@ angular.module('starter.controllers', [])
 }])
 ;
 
-function addAveragePerDayTrashCanSymbology(trashcan) {
-    var scale = Math.ceil(Math.max(0.5,trashcan.stats.averagePerDay)*2);
+function buildCirclePath(r) {
+  //NOTE: taken from http://stackoverflow.com/a/10477334/388006
+  var path = [
+    "M 0, 0",
+    "m -"+r+", 0",
+    "a "+r+","+r+" 0 1,0 "+2*r+",0",
+    "a "+r+","+r+" 0 1,0 -"+2*r+",0"].join(" ");
+  return path;
+}
 
+function determineSymbolColor(trashcan){
+  var symbolColor = 'royalblue';
+  if(trashcan.category === 'Solar Compactor') {
+    symbolColor = 'yellow';
+  }
+  return symbolColor;
+}
+
+function addAveragePerDayTrashCanSymbology(trashcan) {
+    var radius = Math.ceil(Math.max(0.5,trashcan.stats.averagePerDay)*2);
+    var color = determineSymbolColor(trashcan);
     trashcan.icon = {
-        path:'CIRCLE', scale: scale, strokeColor: 'red', fillColor: 'red'
+        path:buildCirclePath(radius), strokeColor: color, fillColor: color, fillOpacity: 1
     };
 }
 
 function addStandardTrashCanSymbology(trashcan) {
-    var color = 'grey';
+    var statusColor = null;
     if(trashcan.trashbags > 0) {
-      color= (trashcan.waitTimeInHours > 4 ? 'red' : (trashcan.waitTimeInHours > 2 ? 'orange': 'blue'));
+      statusColor= (trashcan.waitTimeInHours > 4 ? 'red' : (trashcan.waitTimeInHours > 2 ? 'orange': null));
     }
 
+    // if status color is not defined, then no highlight is needed
+    var strokeOpacity = 1;
+    var strokeWeight = 3;
+    var r = 4;
+    if(!statusColor) {
+      statusColor = 'white';
+      strokeOpacity = 0;
+      strokeWeight=0;
+    }
+    r = r + strokeWeight/2;
+
     trashcan.icon = {
-        path:'CIRCLE', scale: 4, strokeColor: color
+        path:buildCirclePath(r),
+        strokeWeight:strokeWeight,strokeColor: statusColor, strokeOpacity: strokeOpacity,
+        fillColor: determineSymbolColor(trashcan), fillOpacity: 1
     };
 }
 
