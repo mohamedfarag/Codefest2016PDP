@@ -242,6 +242,17 @@ angular.module('starter.controllers', [])
   function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope, $cordovaGeolocation, $ionicActionSheet, zoomService) {
     var vm = this;
 
+    vm.showAll = false;
+    vm.toggleShowAll = function(){
+      vm.showAll = !vm.showAll;
+    };
+    vm.showAllFilter = function(){
+      return function(trashcan){
+        console.log('t', trashcan);
+        return vm.showAll || trashcan.trashbags > 0;
+      };
+    };
+
     vm.truck = {
       icon: "images/truck-marker.png"
     };
@@ -367,7 +378,7 @@ function addAveragePerDayTrashCanSymbology(trashcan) {
 function addStandardTrashCanSymbology(trashcan) {
     var statusColor = null;
     if(trashcan.trashbags > 0) {
-      statusColor= (trashcan.waitTimeInHours > 4 ? 'red' : (trashcan.waitTimeInHours > 2 ? 'orange': null));
+      statusColor= (trashcan.waitTimeInHours > 4 ? 'red' : (trashcan.waitTimeInHours > 2 ? 'orange': 'darkgreen'));
     }
 
     // if status color is not defined, then no highlight is needed
