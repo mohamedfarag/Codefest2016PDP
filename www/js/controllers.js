@@ -197,8 +197,15 @@ angular.module('starter.controllers', [])
   function(TrashService,  $ionicLoading, $rootScope, $state, $stateParams, $ionicModal, $scope,$cordovaGeolocation,$ionicActionSheet) {
     var vm = this;
 
+    vm.updateLocation = true;
+    vm.toggleUpdateLocation = function(){
+      vm.updateLocation = !vm.updateLocation;
+    };
+
     var deregregisterGeolocationUpdates = registerGeolocationUpdates(vm, $cordovaGeolocation, function(p){
-      vm.center = [p.latitude, p.longitude];
+      if(vm.updateLocation) {
+        vm.center = [p.latitude, p.longitude];
+      }
     });
     addTrachcanFetch(vm, $ionicLoading, TrashService, addStandardTrashCanSymbology);
 

@@ -4,6 +4,9 @@
     <ion-nav-title>
       Schedule Pickup
     </ion-nav-title>
+    <ion-nav-buttons side="right">
+      <button class="button button-icon icon" ng-class="{'ion-ios-location': ctrl.updateLocation,'ion-ios-location-outline': !ctrl.updateLocation}" ng-click="ctrl.toggleUpdateLocation()"></button>
+    </ion-nav-buttons>
   </ion-nav-bar>
   <ion-content scroll="false">
     <div class="mapWrap"  data-tap-disabled="true">
